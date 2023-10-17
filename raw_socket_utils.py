@@ -1,11 +1,30 @@
 import socket
 import threading
 import time
+
+import numpy as np
+
 from global_def import *
+from ctypes import cdll, c_double, c_int, POINTER, c_ubyte, byref, c_char_p
 
+raw_socket_so = cdll.LoadLibrary('./ctypes_raw_socket_send.so')
+raw_socket_so.socket_init.argtypes = []
+raw_socket_so.socket_init.restype = c_int
 
+raw_socket_so.send_raw_socket.argtypes = [POINTER(c_ubyte), c_int, c_int]
+raw_socket_so.send_raw_socket.restype = c_int
 
-def send_raw_socket_packet( data, network_if=default_network_if, src=default_src, dst=default_dst, proto=default_proto):
+def ctypes_raw_socket_init():
+	ctypes_raw_socket = raw_socket_so.socket_init()
+	log.debug("ctypes_raw_socket : %d", ctypes_raw_socket)
+
+def ctypes_raw_socket_send(rgb_frame, frame_id):
+	# ubuffer = (c_ubyte * len(rgb_frame)).from_buffer_copy(bytearray(rgb_frame))
+	ubuffer = (c_ubyte * len(rgb_frame)).from_buffer_copy(np.ascontiguousarray(rgb_frame))
+
+	raw_socket_so.send_raw_socket(ubuffer, len(rgb_frame), 0)
+
+def send_raw_socket_packet(data, network_if=default_network_if, src=default_src, dst=default_dst, proto=default_proto):
 	# ETH_P_ALL = 3
 	# s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(ETH_P_ALL))
 	# s.bind((network_if, 0))

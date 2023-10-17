@@ -29,7 +29,7 @@ def logging_init(s):
     # log = logging.getLogger(s)
     log = logging.getLogger()
     formatter = logging.Formatter('%(asctime)s %(levelname)-8s[%(filename)s:%(lineno)d(%(funcName)s)] %(message)s')
-    file_handler = RotatingFileHandler(os.path.join(log_dir,  'multi_ipcam.log'),
+    file_handler = RotatingFileHandler(os.path.join(log_dir,  'opencv_qt.log'),
                                        maxBytes=1024 * 1024 * 5,
                                        backupCount=10)
     file_handler.setLevel(log_level)

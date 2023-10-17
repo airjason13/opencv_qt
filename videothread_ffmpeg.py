@@ -7,6 +7,8 @@ import sys
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 import numpy as np
 import subprocess
+
+import raw_socket_utils
 from global_def import *
 from raw_socket_utils import *
 FFMPEG_BIN = 'ffmpeg'
@@ -16,12 +18,14 @@ class VideoThreadFFMpeg(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
     ffmpeg_change_pixmap_signal = pyqtSignal(np.ndarray)
     send_rgb_frame_signal = pyqtSignal(bytes, int)
+
     def __init__(self, video_src, display_width, display_height, video_type=None, parent=None):
         super().__init__(parent)
         self.video_src = video_src
         self.display_width = display_width
         self.display_height = display_height
         self.frame_count = 0
+
 
     def run(self):
         scale_factor = "scale=" + str(self.display_width) + ":" + str(self.display_height)

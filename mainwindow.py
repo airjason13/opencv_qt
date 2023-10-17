@@ -30,6 +30,8 @@ class MainUi(QMainWindow):
 		self.send_raw_avg_time = None
 		self.frame_count = 0
 
+		self.ctypes_raw_socket = raw_socket_utils.ctypes_raw_socket_init()
+
 		self.image_label = QLabel(self.window)
 		self.image_display_width = 1280
 		self.image_display_height = 720
@@ -48,8 +50,8 @@ class MainUi(QMainWindow):
 		self.thread.send_rgb_frame_signal.connect(self.send_raw_image)
 
 		# start the thread
-		self.thread.setPriority(QThread.HighestPriority)
 		self.thread.start()
+		self.thread.setPriority(QThread.HighestPriority)
 
 	@pyqtSlot(np.ndarray)
 	def update_image(self, cv_img):
@@ -105,7 +107,8 @@ class MainUi(QMainWindow):
 
 	def send_raw_image(self, rgb_frame, frame_id):
 		self.send_raw_start_time = time.time()
-		send_rgb_frame_with_raw_socket(rgb_frame, frame_id)
+		# send_rgb_frame_with_raw_socket(rgb_frame, frame_id)
+		ctypes_raw_socket_send(rgb_frame, frame_id)
 		self.send_raw_end_time = time.time()
 		# log.debug(self.send_raw_start_time)
 		# log.debug(self.send_raw_end_time)
